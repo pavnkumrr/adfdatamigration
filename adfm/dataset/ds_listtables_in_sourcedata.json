@@ -1,0 +1,12 @@
+{
+	"name": "ds_listtables_in_sourcedata",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_onprem_server",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "SqlServerTable",
+		"schema": []
+	}
+}
