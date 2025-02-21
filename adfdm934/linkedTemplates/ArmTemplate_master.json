@@ -15,6 +15,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'datalakels1'"
 		},
+		"lsadvnwrk_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'lsadvnwrk'"
+		},
 		"SqlServer1_properties_typeProperties_server": {
 			"type": "string",
 			"defaultValue": "D"
@@ -30,6 +34,18 @@
 		"datalakels1_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://targetdatasource.dfs.core.windows.net/"
+		},
+		"lsadvnwrk_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "D"
+		},
+		"lsadvnwrk_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "AdventureWorksLT2017"
+		},
+		"lsadvnwrk_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "sa"
 		},
 		"containerUri": {
 			"type": "string",
@@ -64,6 +80,9 @@
 					"datalakels1_accountKey": {
 						"value": "[parameters('datalakels1_accountKey')]"
 					},
+					"lsadvnwrk_password": {
+						"value": "[parameters('lsadvnwrk_password')]"
+					},
 					"SqlServer1_properties_typeProperties_server": {
 						"value": "[parameters('SqlServer1_properties_typeProperties_server')]"
 					},
@@ -75,6 +94,15 @@
 					},
 					"datalakels1_properties_typeProperties_url": {
 						"value": "[parameters('datalakels1_properties_typeProperties_url')]"
+					},
+					"lsadvnwrk_properties_typeProperties_server": {
+						"value": "[parameters('lsadvnwrk_properties_typeProperties_server')]"
+					},
+					"lsadvnwrk_properties_typeProperties_database": {
+						"value": "[parameters('lsadvnwrk_properties_typeProperties_database')]"
+					},
+					"lsadvnwrk_properties_typeProperties_userName": {
+						"value": "[parameters('lsadvnwrk_properties_typeProperties_userName')]"
 					}
 				}
 			},

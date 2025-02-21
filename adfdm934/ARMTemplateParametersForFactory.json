@@ -11,6 +11,9 @@
 		"datalakels1_accountKey": {
 			"value": ""
 		},
+		"lsadvnwrk_password": {
+			"value": ""
+		},
 		"SqlServer1_properties_typeProperties_server": {
 			"value": "D"
 		},
@@ -22,6 +25,15 @@
 		},
 		"datalakels1_properties_typeProperties_url": {
 			"value": "https://targetdatasource.dfs.core.windows.net/"
+		},
+		"lsadvnwrk_properties_typeProperties_server": {
+			"value": "D"
+		},
+		"lsadvnwrk_properties_typeProperties_database": {
+			"value": "AdventureWorksLT2017"
+		},
+		"lsadvnwrk_properties_typeProperties_userName": {
+			"value": "sa"
 		}
 	}
 }
