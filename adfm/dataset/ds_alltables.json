@@ -5,14 +5,14 @@
 			"referenceName": "lsadvnwrk",
 			"type": "LinkedServiceReference"
 		},
+		"parameters": {
+			"TableName": {
+				"type": "string",
+				"defaultValue": "@{dataset().TableName}"
+			}
+		},
 		"annotations": [],
 		"type": "SqlServerTable",
-		"schema": [],
-		"typeProperties": {
-			"table": {
-				"value": "@item().TABLE_NAME",
-				"type": "Expression"
-			}
-		}
+		"schema": []
 	}
 }
