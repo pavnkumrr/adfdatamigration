@@ -3,7 +3,8 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "table_list",
+				"name": "Get_each_table",
+				"description": "get the tables from adventure db",
 				"type": "Lookup",
 				"dependsOn": [],
 				"policy": {
@@ -17,7 +18,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "SqlServerSource",
-						"sqlReaderQuery": "SELECT * FROM  AdventureWorksLT2017.INFORMATION_SCHEMA.TABLES WHERE table_type='BASE TABLE'",
+						"sqlReaderQuery": "select * from AdventureWorksLT2017.INFORMATION_SCHEMA.TABLES WHERE table_type='BASE TABLE'",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
@@ -29,25 +30,27 @@
 				}
 			},
 			{
-				"name": "get_each_table",
+				"name": "ForEachTable",
+				"description": "for each table ",
 				"type": "ForEach",
 				"dependsOn": [
 					{
-						"activity": "table_list",
+						"activity": "Get_each_table",
 						"dependencyConditions": [
-							"Succeeded"
+							"Completed"
 						]
 					}
 				],
 				"userProperties": [],
 				"typeProperties": {
 					"items": {
-						"value": "@activity('table_list').output.value",
+						"value": "@activity('Get_each_table').output.value",
 						"type": "Expression"
 					},
 					"activities": [
 						{
-							"name": "copy_each_table",
+							"name": "CopyTable",
+							"description": "copy each table in for each loop ",
 							"type": "Copy",
 							"dependsOn": [],
 							"policy": {
@@ -59,8 +62,60 @@
 							},
 							"userProperties": [],
 							"typeProperties": {
-								"enableStaging": false
-							}
+								"source": {
+									"type": "SqlServerSource",
+									"queryTimeout": "02:00:00",
+									"partitionOption": "None"
+								},
+								"sink": {
+									"type": "DelimitedTextSink",
+									"storeSettings": {
+										"type": "AzureBlobFSWriteSettings"
+									},
+									"formatSettings": {
+										"type": "DelimitedTextWriteSettings",
+										"quoteAllText": true,
+										"fileExtension": ".txt"
+									}
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"typeConversion": true,
+									"typeConversionSettings": {
+										"allowDataTruncation": true,
+										"treatBooleanAsNumber": false
+									}
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "ds_dbtables",
+									"type": "DatasetReference",
+									"parameters": {
+										"TableName": {
+											"value": "@item().TABLE_NAME",
+											"type": "Expression"
+										},
+										"SchemaName": {
+											"value": "@item().TABLE_SCHEMA",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "ds_targettables",
+									"type": "DatasetReference",
+									"parameters": {
+										"FileName": {
+											"value": "@CONCAT(item().TABLE_SCHEMA,'_',item().TABLE_NAME,'.csv')",
+											"type": "Expression"
+										}
+									}
+								}
+							]
 						}
 					]
 				}
