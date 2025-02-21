@@ -1,0 +1,25 @@
+{
+	"name": "ds_datalke",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "datalakels1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": {
+					"value": "saleslt/@{item().TABLE_NAME}.csv\n",
+					"type": "Expression"
+				}
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	}
+}
