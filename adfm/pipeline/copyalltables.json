@@ -48,7 +48,7 @@
 					},
 					"activities": [
 						{
-							"name": "CopyTableData",
+							"name": "copyeachtabledata",
 							"type": "Copy",
 							"dependsOn": [],
 							"policy": {
@@ -92,7 +92,11 @@
 									"type": "DatasetReference",
 									"parameters": {
 										"TableName": {
-											"value": "@item().Table_Name",
+											"value": "@item().TABLE_NAME",
+											"type": "Expression"
+										},
+										"TableSchema": {
+											"value": "@item().TABLE_SCHEMA",
 											"type": "Expression"
 										}
 									}
@@ -104,7 +108,7 @@
 									"type": "DatasetReference",
 									"parameters": {
 										"FileName": {
-											"value": "@concat(item().TABLE_SCHEMA,'.',item().TABLE_NAME,'.csv')",
+											"value": "@CONCAT(item().TABLE_SCHEMA,'.',item().TABLE_NAME,'.csv')",
 											"type": "Expression"
 										}
 									}
