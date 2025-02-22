@@ -37,16 +37,6 @@
 	},
 	"resources": [
 		{
-			"name": "[concat(parameters('factoryName'), '/SHIS')]",
-			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "SelfHosted",
-				"typeProperties": {}
-			},
-			"dependsOn": []
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/ls_datalake')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -64,32 +54,14 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/ls_onPremServer')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"name": "[concat(parameters('factoryName'), '/SHIS')]",
+			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"annotations": [],
-				"type": "SqlServer",
-				"typeProperties": {
-					"server": "[parameters('ls_onPremServer_properties_typeProperties_server')]",
-					"database": "[parameters('ls_onPremServer_properties_typeProperties_database')]",
-					"encrypt": "mandatory",
-					"trustServerCertificate": true,
-					"authenticationType": "SQL",
-					"userName": "[parameters('ls_onPremServer_properties_typeProperties_userName')]",
-					"password": {
-						"type": "SecureString",
-						"value": "[parameters('ls_onPremServer_password')]"
-					}
-				},
-				"connectVia": {
-					"referenceName": "SHIS",
-					"type": "IntegrationRuntimeReference"
-				}
+				"type": "SelfHosted",
+				"typeProperties": {}
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/integrationRuntimes/SHIS')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/ds_adls')]",
@@ -125,6 +97,34 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/ls_datalake')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ls_onPremServer')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "SqlServer",
+				"typeProperties": {
+					"server": "[parameters('ls_onPremServer_properties_typeProperties_server')]",
+					"database": "[parameters('ls_onPremServer_properties_typeProperties_database')]",
+					"encrypt": "mandatory",
+					"trustServerCertificate": true,
+					"authenticationType": "SQL",
+					"userName": "[parameters('ls_onPremServer_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('ls_onPremServer_password')]"
+					}
+				},
+				"connectVia": {
+					"referenceName": "SHIS",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/integrationRuntimes/SHIS')]"
 			]
 		},
 		{
@@ -321,7 +321,7 @@
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"annotations": [],
-				"runtimeState": "Stopped",
+				"runtimeState": "Started",
 				"pipelines": [
 					{
 						"pipelineReference": {
@@ -334,19 +334,11 @@
 				"type": "ScheduleTrigger",
 				"typeProperties": {
 					"recurrence": {
-						"frequency": "Day",
-						"interval": 14,
-						"startTime": "2025-02-22T10:30:00",
+						"frequency": "Minute",
+						"interval": 3,
+						"startTime": "2025-02-22T10:43:00",
 						"endTime": "2025-02-23T04:53:00",
-						"timeZone": "India Standard Time",
-						"schedule": {
-							"minutes": [
-								30
-							],
-							"hours": [
-								10
-							]
-						}
+						"timeZone": "India Standard Time"
 					}
 				}
 			},
