@@ -202,7 +202,7 @@
 						"typeProperties": {
 							"source": {
 								"type": "SqlServerSource",
-								"sqlReaderQuery": "select * from information_schema.tables where table_type='BASE TABLE'",
+								"sqlReaderQuery": "select * from information_schema.tables where TABLE_SCHEMA='SalesLT' and TABLE_NAME in('Product','CustomerAddress', 'ProductModel', 'SalesOrderDetail')",
 								"queryTimeout": "02:00:00",
 								"partitionOption": "None"
 							},
