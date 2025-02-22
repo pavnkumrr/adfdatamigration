@@ -1,0 +1,12 @@
+{
+	"name": "ds_listtables_onpremserver",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_onPremServer",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "SqlServerTable",
+		"schema": []
+	}
+}
