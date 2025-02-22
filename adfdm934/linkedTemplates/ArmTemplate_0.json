@@ -7,43 +7,27 @@
 			"metadata": "Data Factory name",
 			"defaultValue": "adfdm934"
 		},
-		"SqlServer1_password": {
+		"ls_datalake_accountKey": {
 			"type": "secureString",
-			"metadata": "Secure string for 'password' of 'SqlServer1'"
+			"metadata": "Secure string for 'accountKey' of 'ls_datalake'"
 		},
-		"datalakels1_accountKey": {
+		"ls_onPremServer_password": {
 			"type": "secureString",
-			"metadata": "Secure string for 'accountKey' of 'datalakels1'"
+			"metadata": "Secure string for 'password' of 'ls_onPremServer'"
 		},
-		"lsadvnwrk_password": {
-			"type": "secureString",
-			"metadata": "Secure string for 'password' of 'lsadvnwrk'"
-		},
-		"SqlServer1_properties_typeProperties_server": {
-			"type": "string",
-			"defaultValue": "D"
-		},
-		"SqlServer1_properties_typeProperties_database": {
-			"type": "string",
-			"defaultValue": "salesDB"
-		},
-		"SqlServer1_properties_typeProperties_userName": {
-			"type": "string",
-			"defaultValue": "sa"
-		},
-		"datalakels1_properties_typeProperties_url": {
+		"ls_datalake_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://targetdatasource.dfs.core.windows.net/"
 		},
-		"lsadvnwrk_properties_typeProperties_server": {
+		"ls_onPremServer_properties_typeProperties_server": {
 			"type": "string",
 			"defaultValue": "D"
 		},
-		"lsadvnwrk_properties_typeProperties_database": {
+		"ls_onPremServer_properties_typeProperties_database": {
 			"type": "string",
 			"defaultValue": "AdventureWorksLT2017"
 		},
-		"lsadvnwrk_properties_typeProperties_userName": {
+		"ls_onPremServer_properties_typeProperties_userName": {
 			"type": "string",
 			"defaultValue": "sa"
 		}
@@ -63,74 +47,39 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/SqlServer1')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "SqlServer",
-				"typeProperties": {
-					"server": "[parameters('SqlServer1_properties_typeProperties_server')]",
-					"database": "[parameters('SqlServer1_properties_typeProperties_database')]",
-					"encrypt": "mandatory",
-					"trustServerCertificate": true,
-					"authenticationType": "SQL",
-					"userName": "[parameters('SqlServer1_properties_typeProperties_userName')]",
-					"password": {
-						"type": "SecureString",
-						"value": "[parameters('SqlServer1_password')]"
-					}
-				},
-				"connectVia": {
-					"referenceName": "SHIS",
-					"type": "IntegrationRuntimeReference"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/integrationRuntimes/SHIS')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/datalakels1')]",
+			"name": "[concat(parameters('factoryName'), '/ls_datalake')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"annotations": [],
 				"type": "AzureBlobFS",
 				"typeProperties": {
-					"url": "[parameters('datalakels1_properties_typeProperties_url')]",
+					"url": "[parameters('ls_datalake_properties_typeProperties_url')]",
 					"accountKey": {
 						"type": "SecureString",
-						"value": "[parameters('datalakels1_accountKey')]"
+						"value": "[parameters('ls_datalake_accountKey')]"
 					}
-				},
-				"connectVia": {
-					"referenceName": "SHIS",
-					"type": "IntegrationRuntimeReference"
 				}
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/integrationRuntimes/SHIS')]"
-			]
+			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/lsadvnwrk')]",
+			"name": "[concat(parameters('factoryName'), '/ls_onPremServer')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"description": "local server linked service",
 				"annotations": [],
 				"type": "SqlServer",
 				"typeProperties": {
-					"server": "[parameters('lsadvnwrk_properties_typeProperties_server')]",
-					"database": "[parameters('lsadvnwrk_properties_typeProperties_database')]",
+					"server": "[parameters('ls_onPremServer_properties_typeProperties_server')]",
+					"database": "[parameters('ls_onPremServer_properties_typeProperties_database')]",
 					"encrypt": "mandatory",
 					"trustServerCertificate": true,
 					"authenticationType": "SQL",
-					"userName": "[parameters('lsadvnwrk_properties_typeProperties_userName')]",
+					"userName": "[parameters('ls_onPremServer_properties_typeProperties_userName')]",
 					"password": {
 						"type": "SecureString",
-						"value": "[parameters('lsadvnwrk_password')]"
+						"value": "[parameters('ls_onPremServer_password')]"
 					}
 				},
 				"connectVia": {
@@ -143,127 +92,28 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/SqlServerTable1')]",
+			"name": "[concat(parameters('factoryName'), '/ds_adls')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"linkedServiceName": {
-					"referenceName": "SqlServer1",
+					"referenceName": "ls_datalake",
 					"type": "LinkedServiceReference"
 				},
-				"annotations": [],
-				"type": "SqlServerTable",
-				"schema": [
-					{
-						"name": "SaleID",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "SaleDate",
-						"type": "datetime",
-						"precision": 23,
-						"scale": 3
-					},
-					{
-						"name": "Amount",
-						"type": "decimal",
-						"precision": 10,
-						"scale": 2
-					},
-					{
-						"name": "CustomerName",
-						"type": "varchar"
-					},
-					{
-						"name": "ProductName",
-						"type": "varchar"
+				"parameters": {
+					"FileName": {
+						"type": "string"
 					}
-				],
-				"typeProperties": {
-					"schema": "dbo",
-					"table": "Sales"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/SqlServer1')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/addresstable')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "lsadvnwrk",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "SqlServerTable",
-				"schema": [
-					{
-						"name": "AddressID",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "AddressLine1",
-						"type": "nvarchar"
-					},
-					{
-						"name": "AddressLine2",
-						"type": "nvarchar"
-					},
-					{
-						"name": "City",
-						"type": "nvarchar"
-					},
-					{
-						"name": "StateProvince",
-						"type": "nvarchar"
-					},
-					{
-						"name": "CountryRegion",
-						"type": "nvarchar"
-					},
-					{
-						"name": "PostalCode",
-						"type": "nvarchar"
-					},
-					{
-						"name": "rowguid",
-						"type": "uniqueidentifier"
-					},
-					{
-						"name": "ModifiedDate",
-						"type": "datetime",
-						"precision": 23,
-						"scale": 3
-					}
-				],
-				"typeProperties": {
-					"schema": "SalesLT",
-					"table": "Address"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/lsadvnwrk')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/dsaddress')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "datalakels1",
-					"type": "LinkedServiceReference"
 				},
 				"annotations": [],
 				"type": "DelimitedText",
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
+						"fileName": {
+							"value": "@dataset().FileName",
+							"type": "Expression"
+						},
 						"fileSystem": "bronze"
 					},
 					"columnDelimiter": ",",
@@ -274,236 +124,72 @@
 				"schema": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/datalakels1')]"
+				"[concat(variables('factoryId'), '/linkedServices/ls_datalake')]"
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/targetds')]",
+			"name": "[concat(parameters('factoryName'), '/ds_listtables_onpremserver')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"linkedServiceName": {
-					"referenceName": "datalakels1",
+					"referenceName": "ls_onPremServer",
 					"type": "LinkedServiceReference"
 				},
 				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"folderPath": "tdcm"
+				"type": "SqlServerTable",
+				"schema": [],
+				"typeProperties": {}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ls_onPremServer')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_onpremserver')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ls_onPremServer",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"TableName": {
+						"type": "string"
 					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/datalakels1')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/addresspipeline')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"description": "address table copy ",
-				"activities": [
-					{
-						"name": "addresstablecopy",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [
-							{
-								"name": "Source",
-								"value": "SalesLT.Address"
-							},
-							{
-								"name": "Destination",
-								"value": "bronze//SalesLT.Address"
-							}
-						],
-						"typeProperties": {
-							"source": {
-								"type": "SqlServerSource",
-								"queryTimeout": "02:00:00",
-								"partitionOption": "None"
-							},
-							"sink": {
-								"type": "DelimitedTextSink",
-								"storeSettings": {
-									"type": "AzureBlobFSWriteSettings"
-								},
-								"formatSettings": {
-									"type": "DelimitedTextWriteSettings",
-									"quoteAllText": true,
-									"fileExtension": ".csv"
-								}
-							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"mappings": [
-									{
-										"source": {
-											"name": "AddressID",
-											"type": "Int32",
-											"physicalType": "int"
-										},
-										"sink": {
-											"name": "AddressID",
-											"type": "Int32",
-											"physicalType": "INT_32"
-										}
-									},
-									{
-										"source": {
-											"name": "AddressLine1",
-											"type": "String",
-											"physicalType": "nvarchar"
-										},
-										"sink": {
-											"name": "AddressLine1",
-											"type": "String",
-											"physicalType": "UTF8"
-										}
-									},
-									{
-										"source": {
-											"name": "AddressLine2",
-											"type": "String",
-											"physicalType": "nvarchar"
-										},
-										"sink": {
-											"name": "AddressLine2",
-											"type": "String",
-											"physicalType": "UTF8"
-										}
-									},
-									{
-										"source": {
-											"name": "City",
-											"type": "String",
-											"physicalType": "nvarchar"
-										},
-										"sink": {
-											"name": "City",
-											"type": "String",
-											"physicalType": "UTF8"
-										}
-									},
-									{
-										"source": {
-											"name": "StateProvince",
-											"type": "String",
-											"physicalType": "nvarchar"
-										},
-										"sink": {
-											"name": "StateProvince",
-											"type": "String",
-											"physicalType": "UTF8"
-										}
-									},
-									{
-										"source": {
-											"name": "CountryRegion",
-											"type": "String",
-											"physicalType": "nvarchar"
-										},
-										"sink": {
-											"name": "CountryRegion",
-											"type": "String",
-											"physicalType": "UTF8"
-										}
-									},
-									{
-										"source": {
-											"name": "PostalCode",
-											"type": "String",
-											"physicalType": "nvarchar"
-										},
-										"sink": {
-											"name": "PostalCode",
-											"type": "String",
-											"physicalType": "UTF8"
-										}
-									},
-									{
-										"source": {
-											"name": "rowguid",
-											"type": "Guid",
-											"physicalType": "uniqueidentifier"
-										},
-										"sink": {
-											"name": "rowguid",
-											"type": "Guid",
-											"physicalType": "UTF8"
-										}
-									},
-									{
-										"source": {
-											"name": "ModifiedDate",
-											"type": "DateTime",
-											"physicalType": "datetime"
-										},
-										"sink": {
-											"name": "ModifiedDate",
-											"type": "DateTime",
-											"physicalType": "INT_96"
-										}
-									}
-								],
-								"typeConversion": true,
-								"typeConversionSettings": {
-									"allowDataTruncation": true,
-									"treatBooleanAsNumber": false
-								}
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "addresstable",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "dsaddress",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
+					"TableSchema": {
+						"type": "string"
 					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {}
 				},
-				"annotations": []
+				"annotations": [],
+				"type": "SqlServerTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": {
+						"value": "@dataset().TableSchema",
+						"type": "Expression"
+					},
+					"table": {
+						"value": "@dataset().TableName",
+						"type": "Expression"
+					}
+				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/addresstable')]",
-				"[concat(variables('factoryId'), '/datasets/dsaddress')]"
+				"[concat(variables('factoryId'), '/linkedServices/ls_onPremServer')]"
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/pipeline1')]",
+			"name": "[concat(parameters('factoryName'), '/copyalltables')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"activities": [
 					{
-						"name": "Copy data1",
-						"type": "Copy",
+						"name": "getTableList",
+						"description": "get list of table names and schemas from adventureworkslt2017 db",
+						"type": "Lookup",
 						"dependsOn": [],
 						"policy": {
 							"timeout": "0.12:00:00",
@@ -516,109 +202,106 @@
 						"typeProperties": {
 							"source": {
 								"type": "SqlServerSource",
+								"sqlReaderQuery": "select * from information_schema.tables where table_type='BASE TABLE'",
 								"queryTimeout": "02:00:00",
 								"partitionOption": "None"
 							},
-							"sink": {
-								"type": "DelimitedTextSink",
-								"storeSettings": {
-									"type": "AzureBlobFSWriteSettings",
-									"copyBehavior": "FlattenHierarchy"
-								},
-								"formatSettings": {
-									"type": "DelimitedTextWriteSettings",
-									"quoteAllText": true,
-									"fileExtension": ".csv"
-								}
-							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"mappings": [
-									{
-										"source": {
-											"name": "SaleID",
-											"type": "Int32",
-											"physicalType": "int"
-										},
-										"sink": {
-											"name": "SaleID",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "SaleDate",
-											"type": "DateTime",
-											"physicalType": "datetime"
-										},
-										"sink": {
-											"name": "SaleDate",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "Amount",
-											"type": "Decimal",
-											"physicalType": "decimal",
-											"scale": 2,
-											"precision": 10
-										},
-										"sink": {
-											"name": "Amount",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "CustomerName",
-											"type": "String",
-											"physicalType": "varchar"
-										},
-										"sink": {
-											"name": "CustomerName",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "ProductName",
-											"type": "String",
-											"physicalType": "varchar"
-										},
-										"sink": {
-											"name": "ProductName",
-											"type": "String",
-											"physicalType": "String"
-										}
-									}
-								],
-								"typeConversion": true,
-								"typeConversionSettings": {
-									"allowDataTruncation": true,
-									"treatBooleanAsNumber": false
-								}
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "SqlServerTable1",
+							"dataset": {
+								"referenceName": "ds_listtables_onpremserver",
 								"type": "DatasetReference",
 								"parameters": {}
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "ForEachTable",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "getTableList",
+								"dependencyConditions": [
+									"Succeeded"
+								]
 							}
 						],
-						"outputs": [
-							{
-								"referenceName": "targetds",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('getTableList').output.value",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "copyeachtabledata",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "SqlServerSource",
+											"queryTimeout": "02:00:00",
+											"partitionOption": "None"
+										},
+										"sink": {
+											"type": "DelimitedTextSink",
+											"storeSettings": {
+												"type": "AzureBlobFSWriteSettings"
+											},
+											"formatSettings": {
+												"type": "DelimitedTextWriteSettings",
+												"quoteAllText": true,
+												"fileExtension": ".txt"
+											}
+										},
+										"enableStaging": false,
+										"translator": {
+											"type": "TabularTranslator",
+											"typeConversion": true,
+											"typeConversionSettings": {
+												"allowDataTruncation": true,
+												"treatBooleanAsNumber": false
+											}
+										}
+									},
+									"inputs": [
+										{
+											"referenceName": "ds_onpremserver",
+											"type": "DatasetReference",
+											"parameters": {
+												"TableName": {
+													"value": "@item().TABLE_NAME",
+													"type": "Expression"
+												},
+												"TableSchema": {
+													"value": "@item().TABLE_SCHEMA",
+													"type": "Expression"
+												}
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "ds_adls",
+											"type": "DatasetReference",
+											"parameters": {
+												"FileName": {
+													"value": "@CONCAT(item().TABLE_SCHEMA,'.',item().TABLE_NAME,'.csv')",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								}
+							]
+						}
 					}
 				],
 				"policy": {
@@ -627,8 +310,9 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/SqlServerTable1')]",
-				"[concat(variables('factoryId'), '/datasets/targetds')]"
+				"[concat(variables('factoryId'), '/datasets/ds_listtables_onpremserver')]",
+				"[concat(variables('factoryId'), '/datasets/ds_onpremserver')]",
+				"[concat(variables('factoryId'), '/datasets/ds_adls')]"
 			]
 		}
 	]

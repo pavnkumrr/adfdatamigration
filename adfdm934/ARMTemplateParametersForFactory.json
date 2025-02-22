@@ -5,35 +5,23 @@
 		"factoryName": {
 			"value": "adfdm934"
 		},
-		"SqlServer1_password": {
+		"ls_onPremServer_password": {
 			"value": ""
 		},
-		"datalakels1_accountKey": {
+		"ls_datalake_accountKey": {
 			"value": ""
 		},
-		"lsadvnwrk_password": {
-			"value": ""
-		},
-		"SqlServer1_properties_typeProperties_server": {
+		"ls_onPremServer_properties_typeProperties_server": {
 			"value": "D"
 		},
-		"SqlServer1_properties_typeProperties_database": {
-			"value": "salesDB"
-		},
-		"SqlServer1_properties_typeProperties_userName": {
-			"value": "sa"
-		},
-		"datalakels1_properties_typeProperties_url": {
-			"value": "https://targetdatasource.dfs.core.windows.net/"
-		},
-		"lsadvnwrk_properties_typeProperties_server": {
-			"value": "D"
-		},
-		"lsadvnwrk_properties_typeProperties_database": {
+		"ls_onPremServer_properties_typeProperties_database": {
 			"value": "AdventureWorksLT2017"
 		},
-		"lsadvnwrk_properties_typeProperties_userName": {
+		"ls_onPremServer_properties_typeProperties_userName": {
 			"value": "sa"
+		},
+		"ls_datalake_properties_typeProperties_url": {
+			"value": "https://targetdatasource.dfs.core.windows.net/"
 		}
 	}
 }
