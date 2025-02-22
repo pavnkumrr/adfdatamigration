@@ -16,7 +16,7 @@
 			"recurrence": {
 				"frequency": "Day",
 				"interval": 14,
-				"startTime": "2025-02-22T10:30:00",
+				"startTime": "2025-02-22T10:43:00",
 				"endTime": "2025-02-23T04:53:00",
 				"timeZone": "India Standard Time",
 				"schedule": {
