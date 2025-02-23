@@ -50,6 +50,7 @@
 				") ~> filterbyfueltype",
 				"filterbyfueltype sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
+				"     partitionFileNames:['cars_petrol.csv'],",
 				"     umask: 0022,",
 				"     preCommands: [],",
 				"     postCommands: [],",
