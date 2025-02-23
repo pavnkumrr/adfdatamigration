@@ -1,0 +1,36 @@
+{
+	"name": "df_filter",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_dfsourcefile",
+						"type": "DatasetReference"
+					},
+					"name": "dfsource"
+				}
+			],
+			"sinks": [],
+			"transformations": [],
+			"scriptLines": [
+				"source(output(",
+				"          Brand as string,",
+				"          Model as string,",
+				"          Year as string,",
+				"          Engine_Size as string,",
+				"          Fuel_Type as string,",
+				"          Transmission as string,",
+				"          Mileage as string,",
+				"          Doors as string,",
+				"          Owner_Count as string,",
+				"          Price as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> dfsource"
+			]
+		}
+	}
+}
