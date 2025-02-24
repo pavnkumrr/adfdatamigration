@@ -71,7 +71,14 @@
 				"     preCommands: [],",
 				"     postCommands: [],",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> sink2"
+				"     skipDuplicateMapOutputs: true,",
+				"     mapColumn(",
+				"          {id },",
+				"          fname,",
+				"          lname,",
+				"          {age },",
+				"          hobby",
+				"     )) ~> sink2"
 			]
 		}
 	}
