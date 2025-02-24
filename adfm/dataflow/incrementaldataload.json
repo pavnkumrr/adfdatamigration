@@ -13,7 +13,11 @@
 					"name": "source"
 				},
 				{
-					"name": "source1"
+					"dataset": {
+						"referenceName": "ds_dftarget",
+						"type": "DatasetReference"
+					},
+					"name": "sinkassource"
 				}
 			],
 			"sinks": [
@@ -41,8 +45,16 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> source",
-				"source(allowSchemaDrift: true,",
-				"     validateSchema: false) ~> source1",
+				"source(output(",
+				"          {id } as string,",
+				"          fname as string,",
+				"          lname as string,",
+				"          {age } as string,",
+				"          hobby as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> sinkassource",
 				"source exists(ERROR_FUNCTION('') == ERROR_FUNCTION(''),",
 				"     negate:false,",
 				"     broadcast: 'auto')~> doesnotexist",
