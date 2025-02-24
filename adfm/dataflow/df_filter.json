@@ -28,6 +28,9 @@
 			"transformations": [
 				{
 					"name": "filterbyfueltype"
+				},
+				{
+					"name": "split1"
 				}
 			],
 			"scriptLines": [
@@ -46,10 +49,10 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> dfsource",
-				"dfsource filter(equalsIgnoreCase(Fuel_Type, 'Petrol')\r",
-				"\r",
-				") ~> filterbyfueltype",
-				"filterbyfueltype sink(allowSchemaDrift: true,",
+				"dfsource filter(equalsIgnoreCase(Fuel_Type, 'Petrol')) ~> filterbyfueltype",
+				"filterbyfueltype split(ERROR_FUNCTION(''),",
+				"     disjoint: false) ~> split1@(, )",
+				"split1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     partitionFileNames:['cars_petrol.csv'],",
 				"     umask: 0022,",
