@@ -16,7 +16,15 @@
 					"name": "source1"
 				}
 			],
-			"sinks": [],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_dftarget",
+						"type": "DatasetReference"
+					},
+					"name": "sink"
+				}
+			],
 			"transformations": [
 				{
 					"name": "doesnotexist"
@@ -37,7 +45,21 @@
 				"     validateSchema: false) ~> source1",
 				"source exists(ERROR_FUNCTION('') == ERROR_FUNCTION(''),",
 				"     negate:false,",
-				"     broadcast: 'auto')~> doesnotexist"
+				"     broadcast: 'auto')~> doesnotexist",
+				"doesnotexist sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          {id } as string,",
+				"          fname as string,",
+				"          lname as string,",
+				"          {age } as string,",
+				"          hobby as string",
+				"     ),",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> sink"
 			]
 		}
 	}
