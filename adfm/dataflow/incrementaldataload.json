@@ -67,6 +67,7 @@
 				"          {age } as string,",
 				"          hobby as string",
 				"     ),",
+				"     partitionFileNames:['people.csv'],",
 				"     umask: 0022,",
 				"     preCommands: [],",
 				"     postCommands: [],",
@@ -78,7 +79,8 @@
 				"          lname,",
 				"          {age },",
 				"          hobby",
-				"     )) ~> sink2"
+				"     ),",
+				"     partitionBy('hash', 1)) ~> sink2"
 			]
 		}
 	}
