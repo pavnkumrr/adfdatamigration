@@ -23,6 +23,13 @@
 						"referenceName": "ls_datalake",
 						"type": "LinkedServiceReference"
 					}
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_dftarget",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
 				}
 			],
 			"transformations": [
@@ -30,7 +37,7 @@
 					"name": "filterbyfueltype"
 				},
 				{
-					"name": "split1"
+					"name": "splitenginesize"
 				}
 			],
 			"scriptLines": [
@@ -50,17 +57,38 @@
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> dfsource",
 				"dfsource filter(equalsIgnoreCase(Fuel_Type, 'Petrol')) ~> filterbyfueltype",
-				"filterbyfueltype split(ERROR_FUNCTION(''),",
-				"     disjoint: false) ~> split1@(, )",
-				"split1 sink(allowSchemaDrift: true,",
+				"filterbyfueltype split(Engine_Size>='2',",
+				"     disjoint: false) ~> splitenginesize@(high, low)",
+				"splitenginesize@high sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     partitionFileNames:['cars_petrol.csv'],",
+				"     partitionFileNames:['petrol_highEngine.csv'],",
 				"     umask: 0022,",
 				"     preCommands: [],",
 				"     postCommands: [],",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     partitionBy('hash', 1)) ~> dftargetsink"
+				"     mapColumn(",
+				"          Brand,",
+				"          Model,",
+				"          Year,",
+				"          Engine_Size,",
+				"          Fuel_Type,",
+				"          Transmission,",
+				"          Mileage,",
+				"          Doors,",
+				"          Owner_Count,",
+				"          Price",
+				"     ),",
+				"     partitionBy('hash', 1)) ~> dftargetsink",
+				"splitenginesize@low sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['petrol_lowengine.csv'],",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> sink1"
 			]
 		}
 	}
