@@ -1,5 +1,5 @@
 {
-	"name": "ds_dftarget",
+	"name": "personainfo_dataset",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "ls_datalake",
@@ -11,12 +11,12 @@
 			"location": {
 				"type": "AzureBlobFSLocation",
 				"fileName": "people.csv",
-				"fileSystem": "dftarget"
+				"fileSystem": "bronze"
 			},
 			"columnDelimiter": ",",
 			"escapeChar": "\\",
 			"firstRowAsHeader": true,
-			"quoteChar": null
+			"quoteChar": "\""
 		},
 		"schema": [
 			{

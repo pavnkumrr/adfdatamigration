@@ -1,0 +1,78 @@
+{
+	"name": "incrementaldataload",
+	"properties": {
+		"description": "implementing incremental data load",
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "personainfo_dataset",
+						"type": "DatasetReference"
+					},
+					"name": "source"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_dftarget",
+						"type": "DatasetReference"
+					},
+					"name": "sinkassource"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_dftarget",
+						"type": "DatasetReference"
+					},
+					"name": "sink"
+				}
+			],
+			"transformations": [
+				{
+					"name": "DoesnotExistInSINK"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          {id } as integer,",
+				"          fname as string,",
+				"          lname as string,",
+				"          {age } as string,",
+				"          hobby as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> source",
+				"source(output(",
+				"          {id } as integer,",
+				"          fname as string,",
+				"          lname as string,",
+				"          {age } as string,",
+				"          hobby as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> sinkassource",
+				"source, sinkassource exists(source@{id } == sinkassource@{id },",
+				"     negate:true,",
+				"     broadcast: 'auto')~> DoesnotExistInSINK",
+				"DoesnotExistInSINK sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          {id } as string,",
+				"          fname as string,",
+				"          lname as string,",
+				"          {age } as string,",
+				"          hobby as string",
+				"     ),",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> sink"
+			]
+		}
+	}
+}
