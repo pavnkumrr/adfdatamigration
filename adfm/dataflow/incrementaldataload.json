@@ -7,7 +7,7 @@
 			"sources": [
 				{
 					"dataset": {
-						"referenceName": "personainfo_dataset",
+						"referenceName": "ds_dfsourcefile",
 						"type": "DatasetReference"
 					},
 					"name": "source"
@@ -36,11 +36,16 @@
 			],
 			"scriptLines": [
 				"source(output(",
-				"          {id } as integer,",
-				"          fname as string,",
-				"          lname as string,",
-				"          {age } as string,",
-				"          hobby as string",
+				"          Brand as string,",
+				"          Model as string,",
+				"          Year as string,",
+				"          Engine_Size as string,",
+				"          Fuel_Type as string,",
+				"          Transmission as string,",
+				"          Mileage as string,",
+				"          Doors as string,",
+				"          Owner_Count as string,",
+				"          Price as string",
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
