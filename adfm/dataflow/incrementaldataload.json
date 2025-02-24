@@ -73,13 +73,6 @@
 				"     postCommands: [],",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     mapColumn(",
-				"          {id },",
-				"          fname,",
-				"          lname,",
-				"          {age },",
-				"          hobby",
-				"     ),",
 				"     partitionBy('hash', 1)) ~> sink2"
 			]
 		}
