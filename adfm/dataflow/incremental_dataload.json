@@ -52,7 +52,7 @@
 				"     broadcast: 'auto')~> DoesNotExist",
 				"DoesNotExist sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     partitionFileNames:[''],",
+				"     partitionFileNames:[(concat('people',currentUTC(),'.csv'))],",
 				"     umask: 0022,",
 				"     preCommands: [],",
 				"     postCommands: [],",
