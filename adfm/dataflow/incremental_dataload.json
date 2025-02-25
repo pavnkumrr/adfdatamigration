@@ -13,7 +13,11 @@
 				}
 			],
 			"sinks": [],
-			"transformations": [],
+			"transformations": [
+				{
+					"name": "exists1"
+				}
+			],
 			"scriptLines": [
 				"source(output(",
 				"          {id } as integer,",
@@ -24,7 +28,10 @@
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false) ~> bronzesource"
+				"     ignoreNoFilesFound: false) ~> bronzesource",
+				"bronzesource exists(ERROR_FUNCTION('') == ERROR_FUNCTION(''),",
+				"     negate:false,",
+				"     broadcast: 'auto')~> exists1"
 			]
 		}
 	}
