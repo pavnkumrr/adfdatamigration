@@ -1,5 +1,5 @@
 {
-	"name": "dataflow1",
+	"name": "incremental_dataload",
 	"properties": {
 		"type": "MappingDataFlow",
 		"typeProperties": {
