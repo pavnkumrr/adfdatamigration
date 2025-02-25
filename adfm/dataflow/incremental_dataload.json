@@ -10,6 +10,13 @@
 						"type": "DatasetReference"
 					},
 					"name": "bronzesource"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_peopleTarget",
+						"type": "DatasetReference"
+					},
+					"name": "sinkassource"
 				}
 			],
 			"sinks": [],
@@ -29,6 +36,16 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> bronzesource",
+				"source(output(",
+				"          {id } as integer,",
+				"          fname as string,",
+				"          lname as string,",
+				"          {age } as string,",
+				"          hobby as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> sinkassource",
 				"bronzesource exists(ERROR_FUNCTION('') == ERROR_FUNCTION(''),",
 				"     negate:false,",
 				"     broadcast: 'auto')~> exists1"
