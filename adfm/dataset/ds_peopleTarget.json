@@ -18,6 +18,27 @@
 			"firstRowAsHeader": true,
 			"quoteChar": "\""
 		},
-		"schema": []
+		"schema": [
+			{
+				"name": "id ",
+				"type": "String"
+			},
+			{
+				"name": "fname",
+				"type": "String"
+			},
+			{
+				"name": "lname",
+				"type": "String"
+			},
+			{
+				"name": "age ",
+				"type": "String"
+			},
+			{
+				"name": "hobby",
+				"type": "String"
+			}
+		]
 	}
 }
