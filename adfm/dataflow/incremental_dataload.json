@@ -30,7 +30,7 @@
 			],
 			"transformations": [
 				{
-					"name": "DoesNotExist"
+					"name": "doesnotexist"
 				}
 			],
 			"scriptLines": [
@@ -47,10 +47,10 @@
 				"source(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> sinkassource2",
-				"source, sinkassource2 exists(ERROR_FUNCTION('') == ERROR_FUNCTION(''),",
-				"     negate:false,",
-				"     broadcast: 'auto')~> DoesNotExist",
-				"DoesNotExist sink(allowSchemaDrift: true,",
+				"source, sinkassource2 exists({id } == ERROR_FUNCTION(''),",
+				"     negate:true,",
+				"     broadcast: 'auto')~> doesnotexist",
+				"doesnotexist sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     partitionFileNames:[(concat('people',currentUTC(),'.csv'))],",
 				"     umask: 0022,",
