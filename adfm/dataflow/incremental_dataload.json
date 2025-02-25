@@ -19,10 +19,18 @@
 					"name": "sinkassource"
 				}
 			],
-			"sinks": [],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_peopleTarget",
+						"type": "DatasetReference"
+					},
+					"name": "sink"
+				}
+			],
 			"transformations": [
 				{
-					"name": "exists1"
+					"name": "doesnotexist"
 				}
 			],
 			"scriptLines": [
@@ -46,9 +54,25 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> sinkassource",
-				"bronzesource exists(ERROR_FUNCTION('') == ERROR_FUNCTION(''),",
-				"     negate:false,",
-				"     broadcast: 'auto')~> exists1"
+				"bronzesource, sinkassource exists(bronzesource@{id } == sinkassource@{id },",
+				"     negate:true,",
+				"     broadcast: 'auto')~> doesnotexist",
+				"doesnotexist sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          {id } as string,",
+				"          fname as string,",
+				"          lname as string,",
+				"          {age } as string,",
+				"          hobby as string",
+				"     ),",
+				"     partitionFileNames:['people.csv'],",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> sink"
 			]
 		}
 	}
