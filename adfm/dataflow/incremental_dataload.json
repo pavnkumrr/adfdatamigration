@@ -19,7 +19,11 @@
 					"name": "sinkassource"
 				}
 			],
-			"sinks": [],
+			"sinks": [
+				{
+					"name": "sink1"
+				}
+			],
 			"transformations": [
 				{
 					"name": "doesnotexist"
@@ -48,7 +52,11 @@
 				"     ignoreNoFilesFound: false) ~> sinkassource",
 				"bronzesource, sinkassource exists(bronzesource@{id } == sinkassource@{id },",
 				"     negate:true,",
-				"     broadcast: 'auto')~> doesnotexist"
+				"     broadcast: 'auto')~> doesnotexist",
+				"doesnotexist sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> sink1"
 			]
 		}
 	}
