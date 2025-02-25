@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "incrementaldataload",
+				"name": "incremental_dataload",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [],
 				"policy": {
@@ -15,6 +15,10 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
+					"dataflow": {
+						"referenceName": "incremental_dataload",
+						"type": "DataFlowReference"
+					},
 					"compute": {
 						"coreCount": 8,
 						"computeType": "General"
