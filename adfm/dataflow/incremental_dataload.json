@@ -52,6 +52,7 @@
 				"     broadcast: 'auto')~> DoesNotExist",
 				"DoesNotExist sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
+				"     filePattern:'',",
 				"     umask: 0022,",
 				"     preCommands: [],",
 				"     postCommands: [],",
