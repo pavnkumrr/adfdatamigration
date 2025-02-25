@@ -1,18 +1,18 @@
 {
-	"name": "mergingrows",
+	"name": "dataflow1",
 	"properties": {
 		"type": "MappingDataFlow",
 		"typeProperties": {
 			"sources": [
 				{
+					"dataset": {
+						"referenceName": "ds_people",
+						"type": "DatasetReference"
+					},
 					"name": "source"
 				}
 			],
-			"sinks": [
-				{
-					"name": "sink"
-				}
-			],
+			"sinks": [],
 			"transformations": [],
 			"scriptLines": [
 				"source(output(",
@@ -22,14 +22,9 @@
 				"          {age } as string,",
 				"          hobby as string",
 				"     ),",
-				"     allowSchemaDrift: false,",
-				"     validateSchema: false) ~> source",
-				"source sink(allowSchemaDrift: false,",
+				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true,",
-				"     preCommands: [],",
-				"     postCommands: []) ~> sink"
+				"     ignoreNoFilesFound: false) ~> source"
 			]
 		}
 	}

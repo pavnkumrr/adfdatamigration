@@ -5,19 +5,11 @@
 		"typeProperties": {
 			"sources": [
 				{
-					"dataset": {
-						"referenceName": "ds_dfsourcefile",
-						"type": "DatasetReference"
-					},
 					"name": "dfsource"
 				}
 			],
 			"sinks": [
 				{
-					"dataset": {
-						"referenceName": "ds_dftarget",
-						"type": "DatasetReference"
-					},
 					"name": "dftargetsink",
 					"rejectedDataLinkedService": {
 						"referenceName": "ls_datalake",
@@ -25,10 +17,6 @@
 					}
 				},
 				{
-					"dataset": {
-						"referenceName": "ds_dftarget",
-						"type": "DatasetReference"
-					},
 					"name": "sink1"
 				}
 			],
@@ -54,24 +42,13 @@
 				"          Price as string",
 				"     ),",
 				"     allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false) ~> dfsource",
+				"     validateSchema: false) ~> dfsource",
 				"dfsource filter(equalsIgnoreCase(Fuel_Type, 'Petrol')) ~> filterbyfueltype",
 				"filterbyfueltype split(Engine_Size>='2',",
 				"     disjoint: false) ~> splitenginesize@(high, low)",
 				"splitenginesize@high sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     input(",
-				"          {id } as string,",
-				"          fname as string,",
-				"          lname as string,",
-				"          {age } as string,",
-				"          hobby as string",
-				"     ),",
 				"     partitionFileNames:['petrol_highEngine.csv'],",
-				"     umask: 0022,",
-				"     preCommands: [],",
-				"     postCommands: [],",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
 				"     mapColumn(",
@@ -86,23 +63,17 @@
 				"          Owner_Count,",
 				"          Price",
 				"     ),",
-				"     partitionBy('hash', 1)) ~> dftargetsink",
+				"     partitionBy('hash', 1),",
+				"     preCommands: [],",
+				"     postCommands: []) ~> dftargetsink",
 				"splitenginesize@low sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     input(",
-				"          {id } as string,",
-				"          fname as string,",
-				"          lname as string,",
-				"          {age } as string,",
-				"          hobby as string",
-				"     ),",
 				"     partitionFileNames:['petrol_lowengine.csv'],",
-				"     umask: 0022,",
-				"     preCommands: [],",
-				"     postCommands: [],",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     partitionBy('hash', 1)) ~> sink1"
+				"     partitionBy('hash', 1),",
+				"     preCommands: [],",
+				"     postCommands: []) ~> sink1"
 			]
 		}
 	}
