@@ -47,7 +47,7 @@
 				"source(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> sinkassource2",
-				"source, sinkassource2 exists(sour,",
+				"source, sinkassource2 exists(ERROR_FUNCTION('source.{id }==sinkassource1{id }'),",
 				"     negate:true,",
 				"     broadcast: 'auto')~> doesnotexist",
 				"doesnotexist sink(allowSchemaDrift: true,",
