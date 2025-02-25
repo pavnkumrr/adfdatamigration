@@ -19,15 +19,7 @@
 					"name": "sinkassource"
 				}
 			],
-			"sinks": [
-				{
-					"dataset": {
-						"referenceName": "ds_peopleTarget",
-						"type": "DatasetReference"
-					},
-					"name": "sink"
-				}
-			],
+			"sinks": [],
 			"transformations": [
 				{
 					"name": "doesnotexist"
@@ -56,21 +48,7 @@
 				"     ignoreNoFilesFound: false) ~> sinkassource",
 				"bronzesource, sinkassource exists(bronzesource@{id } == sinkassource@{id },",
 				"     negate:true,",
-				"     broadcast: 'auto')~> doesnotexist",
-				"doesnotexist sink(allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     input(",
-				"          {id } as string,",
-				"          fname as string,",
-				"          lname as string,",
-				"          {age } as string,",
-				"          hobby as string",
-				"     ),",
-				"     umask: 0022,",
-				"     preCommands: [],",
-				"     postCommands: [],",
-				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> sink"
+				"     broadcast: 'auto')~> doesnotexist"
 			]
 		}
 	}
