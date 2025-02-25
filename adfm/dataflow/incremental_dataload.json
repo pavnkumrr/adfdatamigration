@@ -21,6 +21,10 @@
 			],
 			"sinks": [
 				{
+					"linkedService": {
+						"referenceName": "ls_datalake",
+						"type": "LinkedServiceReference"
+					},
 					"name": "sink1"
 				}
 			],
@@ -55,6 +59,18 @@
 				"     broadcast: 'auto')~> doesnotexist",
 				"doesnotexist sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
+				"     format: 'delta',",
+				"     mergeSchema: false,",
+				"     autoCompact: false,",
+				"     optimizedWrite: false,",
+				"     vacuum: 0,",
+				"     deletable: false,",
+				"     insertable: true,",
+				"     updateable: false,",
+				"     upsertable: false,",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> sink1"
 			]
