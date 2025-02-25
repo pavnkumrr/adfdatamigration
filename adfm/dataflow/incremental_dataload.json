@@ -10,29 +10,10 @@
 						"type": "DatasetReference"
 					},
 					"name": "source"
-				},
-				{
-					"dataset": {
-						"referenceName": "ds_peopleTarget",
-						"type": "DatasetReference"
-					},
-					"name": "sinkassource2"
 				}
 			],
-			"sinks": [
-				{
-					"dataset": {
-						"referenceName": "ds_peopleTarget",
-						"type": "DatasetReference"
-					},
-					"name": "sink"
-				}
-			],
-			"transformations": [
-				{
-					"name": "doesnotexist"
-				}
-			],
+			"sinks": [],
+			"transformations": [],
 			"scriptLines": [
 				"source(output(",
 				"          {id } as integer,",
@@ -43,22 +24,7 @@
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false) ~> source",
-				"source(allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false) ~> sinkassource2",
-				"source, sinkassource2 exists(ERROR_FUNCTION('source.{id }==sinkassource1{id }'),",
-				"     negate:true,",
-				"     broadcast: 'auto')~> doesnotexist",
-				"doesnotexist sink(allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     partitionFileNames:[(concat('people',currentUTC(),'.csv'))],",
-				"     umask: 0022,",
-				"     preCommands: [],",
-				"     postCommands: [],",
-				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true,",
-				"     partitionBy('hash', 1)) ~> sink"
+				"     ignoreNoFilesFound: false) ~> source"
 			]
 		}
 	}
