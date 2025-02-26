@@ -23,7 +23,10 @@
 						"coreCount": 8,
 						"computeType": "General"
 					},
-					"traceLevel": "Fine"
+					"traceLevel": "Fine",
+					"continuationSettings": {
+						"customizedCheckpointKey": "bd6802ac-2bd5-401e-ae2c-b57bb889b166"
+					}
 				}
 			}
 		],
