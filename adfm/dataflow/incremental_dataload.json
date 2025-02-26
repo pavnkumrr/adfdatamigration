@@ -21,11 +21,11 @@
 			],
 			"sinks": [
 				{
-					"linkedService": {
-						"referenceName": "ls_datalake",
-						"type": "LinkedServiceReference"
+					"dataset": {
+						"referenceName": "targetsqldb",
+						"type": "DatasetReference"
 					},
-					"name": "sink1"
+					"name": "sink"
 				}
 			],
 			"transformations": [
@@ -58,25 +58,31 @@
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table') ~> sinkassource",
-				"bronzesource, sinkassource exists({id } == sinkassource@{id },",
+				"bronzesource, sinkassource exists({id } == id,",
 				"     negate:true,",
 				"     broadcast: 'auto')~> doesnotexist",
 				"doesnotexist sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     format: 'delta',",
-				"     mergeSchema: false,",
-				"     autoCompact: false,",
-				"     optimizedWrite: false,",
-				"     vacuum: 0,",
-				"     deletable: false,",
-				"     insertable: true,",
-				"     updateable: false,",
-				"     upsertable: false,",
-				"     umask: 0022,",
-				"     preCommands: [],",
-				"     postCommands: [],",
+				"     input(",
+				"          key as integer,",
+				"          active as boolean,",
+				"          created as timestamp,",
+				"          id as integer,",
+				"          fname as string,",
+				"          lname as string,",
+				"          age as string,",
+				"          hobby as string",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:false,",
+				"     updateable:false,",
+				"     upsertable:true,",
+				"     format: 'table',",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> sink1"
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     preCommands: [],",
+				"     postCommands: []) ~> sink"
 			]
 		}
 	}
