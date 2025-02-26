@@ -58,7 +58,7 @@
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table') ~> sinkassource",
-				"bronzesource, sinkassource exists(bronzesource@{id } == sinkassource@{id },",
+				"bronzesource, sinkassource exists({id } == sinkassource@{id },",
 				"     negate:true,",
 				"     broadcast: 'auto')~> doesnotexist",
 				"doesnotexist sink(allowSchemaDrift: true,",
