@@ -24,6 +24,7 @@
 						"computeType": "General"
 					},
 					"traceLevel": "None",
+					"runConcurrently": true,
 					"cacheSinks": {
 						"firstRowOnly": true
 					},
