@@ -78,6 +78,11 @@
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
 				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          fname,",
+				"          lname,",
+				"          hobby",
+				"     ),",
 				"     preCommands: [],",
 				"     postCommands: []) ~> sink"
 			]
