@@ -1,0 +1,53 @@
+{
+	"name": "targetsqldb",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "lssqldb",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "key",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "active",
+				"type": "bit"
+			},
+			{
+				"name": "created",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "id",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "fname",
+				"type": "nvarchar"
+			},
+			{
+				"name": "lname",
+				"type": "nvarchar"
+			},
+			{
+				"name": "age",
+				"type": "nvarchar"
+			},
+			{
+				"name": "hobby",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "persons"
+		}
+	}
+}

@@ -13,7 +13,7 @@
 				},
 				{
 					"dataset": {
-						"referenceName": "ds_peopleTarget",
+						"referenceName": "targetsqldb",
 						"type": "DatasetReference"
 					},
 					"name": "sinkassource"
@@ -45,15 +45,19 @@
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> bronzesource",
 				"source(output(",
-				"          {id } as integer,",
+				"          key as integer,",
+				"          active as boolean,",
+				"          created as timestamp,",
+				"          id as integer,",
 				"          fname as string,",
 				"          lname as string,",
-				"          {age } as string,",
+				"          age as string,",
 				"          hobby as string",
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false) ~> sinkassource",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> sinkassource",
 				"bronzesource, sinkassource exists(bronzesource@{id } == sinkassource@{id },",
 				"     negate:true,",
 				"     broadcast: 'auto')~> doesnotexist",
