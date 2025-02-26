@@ -35,7 +35,7 @@
 			],
 			"scriptLines": [
 				"source(output(",
-				"          {id } as integer,",
+				"          {id } as string,",
 				"          fname as string,",
 				"          lname as string,",
 				"          {age } as string,",
