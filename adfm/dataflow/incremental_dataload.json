@@ -65,7 +65,7 @@
 				"bronzesource, sinkassource exists({id } == id,",
 				"     negate:true,",
 				"     broadcast: 'auto')~> doesnotexist",
-				"doesnotexist alterRow(upsertIf({id }=={id })) ~> AlterRow1",
+				"doesnotexist alterRow(upsertIf(true())) ~> AlterRow1",
 				"AlterRow1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
