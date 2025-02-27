@@ -31,6 +31,9 @@
 			"transformations": [
 				{
 					"name": "doesnotexist"
+				},
+				{
+					"name": "AlterRow1"
 				}
 			],
 			"scriptLines": [
@@ -61,7 +64,8 @@
 				"bronzesource, sinkassource exists({id } == id,",
 				"     negate:true,",
 				"     broadcast: 'auto')~> doesnotexist",
-				"doesnotexist sink(allowSchemaDrift: true,",
+				"doesnotexist alterRow() ~> AlterRow1",
+				"AlterRow1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
 				"          id as integer,",
@@ -73,7 +77,7 @@
 				"     deletable:false,",
 				"     insertable:true,",
 				"     updateable:false,",
-				"     upsertable:false,",
+				"     upsertable:true,",
 				"     format: 'table',",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
