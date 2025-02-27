@@ -61,7 +61,7 @@
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table') ~> sinkassource",
 				"bronzesource, sinkassource exists({id } == id,",
-				"     negate:true,",
+				"     negate:false,",
 				"     broadcast: 'auto')~> doesnotexist",
 				"doesnotexist sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
