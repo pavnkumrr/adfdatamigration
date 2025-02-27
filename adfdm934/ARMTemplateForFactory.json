@@ -15,6 +15,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'ls_onPremServer'"
 		},
+		"lssqldb_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'lssqldb'"
+		},
 		"ls_datalake_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://targetdatasource.dfs.core.windows.net/"
@@ -30,6 +34,18 @@
 		"ls_onPremServer_properties_typeProperties_userName": {
 			"type": "string",
 			"defaultValue": "sa"
+		},
+		"lssqldb_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "azdmsqlserver.database.windows.net"
+		},
+		"lssqldb_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "azdmsqldb"
+		},
+		"lssqldb_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "pavn"
 		}
 	},
 	"variables": {
@@ -37,195 +53,13 @@
 	},
 	"resources": [
 		{
-			"name": "[concat(parameters('factoryName'), '/copyalltables')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "getTableList",
-						"description": "get list of table names and schemas from adventureworkslt2017 db",
-						"type": "Lookup",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "SqlServerSource",
-								"sqlReaderQuery": "select * from information_schema.tables where TABLE_SCHEMA='SalesLT' and TABLE_NAME in('Product','CustomerAddress', 'ProductModel', 'SalesOrderDetail')",
-								"queryTimeout": "02:00:00",
-								"partitionOption": "None"
-							},
-							"dataset": {
-								"referenceName": "ds_listtables_onpremserver",
-								"type": "DatasetReference",
-								"parameters": {}
-							},
-							"firstRowOnly": false
-						}
-					},
-					{
-						"name": "ForEachTable",
-						"type": "ForEach",
-						"dependsOn": [
-							{
-								"activity": "getTableList",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"items": {
-								"value": "@activity('getTableList').output.value",
-								"type": "Expression"
-							},
-							"activities": [
-								{
-									"name": "copyeachtabledata",
-									"type": "Copy",
-									"dependsOn": [],
-									"policy": {
-										"timeout": "0.12:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"source": {
-											"type": "SqlServerSource",
-											"queryTimeout": "02:00:00",
-											"partitionOption": "None"
-										},
-										"sink": {
-											"type": "DelimitedTextSink",
-											"storeSettings": {
-												"type": "AzureBlobFSWriteSettings"
-											},
-											"formatSettings": {
-												"type": "DelimitedTextWriteSettings",
-												"quoteAllText": true,
-												"fileExtension": ".txt"
-											}
-										},
-										"enableStaging": false,
-										"translator": {
-											"type": "TabularTranslator",
-											"typeConversion": true,
-											"typeConversionSettings": {
-												"allowDataTruncation": true,
-												"treatBooleanAsNumber": false
-											}
-										}
-									},
-									"inputs": [
-										{
-											"referenceName": "ds_onpremserver",
-											"type": "DatasetReference",
-											"parameters": {
-												"TableName": {
-													"value": "@item().TABLE_NAME",
-													"type": "Expression"
-												},
-												"TableSchema": {
-													"value": "@item().TABLE_SCHEMA",
-													"type": "Expression"
-												}
-											}
-										}
-									],
-									"outputs": [
-										{
-											"referenceName": "ds_adls",
-											"type": "DatasetReference",
-											"parameters": {
-												"FileName": {
-													"value": "@CONCAT(item().TABLE_SCHEMA,'.',item().TABLE_NAME,'.csv')",
-													"type": "Expression"
-												}
-											}
-										}
-									]
-								}
-							]
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {}
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/ds_listtables_onpremserver')]",
-				"[concat(variables('factoryId'), '/datasets/ds_onpremserver')]",
-				"[concat(variables('factoryId'), '/datasets/ds_adls')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/dfpipeline')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "df_filter",
-						"type": "ExecuteDataFlow",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "df_filter",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"dfsource": {},
-									"dftargetsink": {},
-									"sink1": {}
-								}
-							},
-							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
-							},
-							"traceLevel": "Fine"
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {}
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/df_filter')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/incrementaldataload')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"activities": [
 					{
-						"name": "incrementaldataload",
+						"name": "incremental_dataload",
 						"type": "ExecuteDataFlow",
 						"dependsOn": [],
 						"policy": {
@@ -238,21 +72,25 @@
 						"userProperties": [],
 						"typeProperties": {
 							"dataflow": {
-								"referenceName": "incrementaldataload",
+								"referenceName": "incremental_dataload",
 								"type": "DataFlowReference",
 								"parameters": {},
 								"datasetParameters": {
-									"source": {},
+									"bronzesource": {},
 									"sinkassource": {},
 									"sink": {}
-								}
+								},
+								"linkedServiceParameters": {}
 							},
 							"staging": {},
 							"compute": {
 								"coreCount": 8,
 								"computeType": "General"
 							},
-							"traceLevel": "Fine"
+							"traceLevel": "None",
+							"cacheSinks": {
+								"firstRowOnly": true
+							}
 						}
 					}
 				],
@@ -262,116 +100,11 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/incrementaldataload')]"
+				"[concat(variables('factoryId'), '/dataflows/incremental_dataload')]"
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/ds_adls')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "ls_datalake",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"FileName": {
-						"type": "string"
-					}
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileName": {
-							"value": "@dataset().FileName",
-							"type": "Expression"
-						},
-						"fileSystem": "bronze"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ls_datalake')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ds_dfsourcefile')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "ls_datalake",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileName": "car_price_dataset.csv",
-						"fileSystem": "dfsouce"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": [
-					{
-						"name": "Brand",
-						"type": "String"
-					},
-					{
-						"name": "Model",
-						"type": "String"
-					},
-					{
-						"name": "Year",
-						"type": "String"
-					},
-					{
-						"name": "Engine_Size",
-						"type": "String"
-					},
-					{
-						"name": "Fuel_Type",
-						"type": "String"
-					},
-					{
-						"name": "Transmission",
-						"type": "String"
-					},
-					{
-						"name": "Mileage",
-						"type": "String"
-					},
-					{
-						"name": "Doors",
-						"type": "String"
-					},
-					{
-						"name": "Owner_Count",
-						"type": "String"
-					},
-					{
-						"name": "Price",
-						"type": "String"
-					}
-				]
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ls_datalake')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ds_dftarget')]",
+			"name": "[concat(parameters('factoryName'), '/ds_people')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -385,12 +118,12 @@
 					"location": {
 						"type": "AzureBlobFSLocation",
 						"fileName": "people.csv",
-						"fileSystem": "dftarget"
+						"fileSystem": "bronze"
 					},
 					"columnDelimiter": ",",
 					"escapeChar": "\\",
 					"firstRowAsHeader": true,
-					"quoteChar": null
+					"quoteChar": "\""
 				},
 				"schema": [
 					{
@@ -420,105 +153,47 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/ds_listtables_onpremserver')]",
+			"name": "[concat(parameters('factoryName'), '/targetsqldb')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"linkedServiceName": {
-					"referenceName": "ls_onPremServer",
+					"referenceName": "lssqldb",
 					"type": "LinkedServiceReference"
 				},
 				"annotations": [],
-				"type": "SqlServerTable",
-				"schema": [],
-				"typeProperties": {}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ls_onPremServer')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ds_onpremserver')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "ls_onPremServer",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"TableName": {
-						"type": "string"
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "id",
+						"type": "int",
+						"precision": 10
 					},
-					"TableSchema": {
-						"type": "string"
+					{
+						"name": "fname",
+						"type": "varchar"
+					},
+					{
+						"name": "lname",
+						"type": "varchar"
+					},
+					{
+						"name": "age",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "hobby",
+						"type": "varchar"
 					}
-				},
-				"annotations": [],
-				"type": "SqlServerTable",
-				"schema": [],
+				],
 				"typeProperties": {
-					"schema": {
-						"value": "@dataset().TableSchema",
-						"type": "Expression"
-					},
-					"table": {
-						"value": "@dataset().TableName",
-						"type": "Expression"
-					}
+					"schema": "dbo",
+					"table": "persons"
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ls_onPremServer')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/personainfo_dataset')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "ls_datalake",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileName": "people.csv",
-						"fileSystem": "bronze"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": [
-					{
-						"name": "id ",
-						"type": "String"
-					},
-					{
-						"name": "fname",
-						"type": "String"
-					},
-					{
-						"name": "lname",
-						"type": "String"
-					},
-					{
-						"name": "age ",
-						"type": "String"
-					},
-					{
-						"name": "hobby",
-						"type": "String"
-					}
-				]
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ls_datalake')]"
+				"[concat(variables('factoryId'), '/linkedServices/lssqldb')]"
 			]
 		},
 		{
@@ -567,21 +242,35 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/lssqldb')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"server": "[parameters('lssqldb_properties_typeProperties_server')]",
+					"database": "[parameters('lssqldb_properties_typeProperties_database')]",
+					"encrypt": "mandatory",
+					"trustServerCertificate": true,
+					"authenticationType": "SQL",
+					"userName": "[parameters('lssqldb_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('lssqldb_password')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/Schedule_trigger')]",
 			"type": "Microsoft.DataFactory/factories/triggers",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"annotations": [],
 				"runtimeState": "Stopped",
-				"pipelines": [
-					{
-						"pipelineReference": {
-							"referenceName": "copyalltables",
-							"type": "PipelineReference"
-						},
-						"parameters": {}
-					}
-				],
+				"pipelines": [],
 				"type": "ScheduleTrigger",
 				"typeProperties": {
 					"recurrence": {
@@ -593,9 +282,7 @@
 					}
 				}
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/copyalltables')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/SHIS')]",
@@ -608,7 +295,7 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/df_filter')]",
+			"name": "[concat(parameters('factoryName'), '/incremental_dataload')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -617,131 +304,14 @@
 					"sources": [
 						{
 							"dataset": {
-								"referenceName": "ds_dfsourcefile",
+								"referenceName": "ds_people",
 								"type": "DatasetReference"
 							},
-							"name": "dfsource"
-						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "ds_dftarget",
-								"type": "DatasetReference"
-							},
-							"name": "dftargetsink",
-							"rejectedDataLinkedService": {
-								"referenceName": "ls_datalake",
-								"type": "LinkedServiceReference"
-							}
+							"name": "bronzesource"
 						},
 						{
 							"dataset": {
-								"referenceName": "ds_dftarget",
-								"type": "DatasetReference"
-							},
-							"name": "sink1"
-						}
-					],
-					"transformations": [
-						{
-							"name": "filterbyfueltype"
-						},
-						{
-							"name": "splitenginesize"
-						}
-					],
-					"scriptLines": [
-						"source(output(",
-						"          Brand as string,",
-						"          Model as string,",
-						"          Year as string,",
-						"          Engine_Size as string,",
-						"          Fuel_Type as string,",
-						"          Transmission as string,",
-						"          Mileage as string,",
-						"          Doors as string,",
-						"          Owner_Count as string,",
-						"          Price as string",
-						"     ),",
-						"     allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     ignoreNoFilesFound: false) ~> dfsource",
-						"dfsource filter(equalsIgnoreCase(Fuel_Type, 'Petrol')) ~> filterbyfueltype",
-						"filterbyfueltype split(Engine_Size>='2',",
-						"     disjoint: false) ~> splitenginesize@(high, low)",
-						"splitenginesize@high sink(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     input(",
-						"          {id } as string,",
-						"          fname as string,",
-						"          lname as string,",
-						"          {age } as string,",
-						"          hobby as string",
-						"     ),",
-						"     partitionFileNames:['petrol_highEngine.csv'],",
-						"     umask: 0022,",
-						"     preCommands: [],",
-						"     postCommands: [],",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true,",
-						"     mapColumn(",
-						"          Brand,",
-						"          Model,",
-						"          Year,",
-						"          Engine_Size,",
-						"          Fuel_Type,",
-						"          Transmission,",
-						"          Mileage,",
-						"          Doors,",
-						"          Owner_Count,",
-						"          Price",
-						"     ),",
-						"     partitionBy('hash', 1)) ~> dftargetsink",
-						"splitenginesize@low sink(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     input(",
-						"          {id } as string,",
-						"          fname as string,",
-						"          lname as string,",
-						"          {age } as string,",
-						"          hobby as string",
-						"     ),",
-						"     partitionFileNames:['petrol_lowengine.csv'],",
-						"     umask: 0022,",
-						"     preCommands: [],",
-						"     postCommands: [],",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true,",
-						"     partitionBy('hash', 1)) ~> sink1"
-					]
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/ds_dfsourcefile')]",
-				"[concat(variables('factoryId'), '/datasets/ds_dftarget')]",
-				"[concat(variables('factoryId'), '/linkedServices/ls_datalake')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/incrementaldataload')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"description": "implementing incremental data load",
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "personainfo_dataset",
-								"type": "DatasetReference"
-							},
-							"name": "source"
-						},
-						{
-							"dataset": {
-								"referenceName": "ds_dftarget",
+								"referenceName": "targetsqldb",
 								"type": "DatasetReference"
 							},
 							"name": "sinkassource"
@@ -750,7 +320,7 @@
 					"sinks": [
 						{
 							"dataset": {
-								"referenceName": "ds_dftarget",
+								"referenceName": "targetsqldb",
 								"type": "DatasetReference"
 							},
 							"name": "sink"
@@ -758,7 +328,10 @@
 					],
 					"transformations": [
 						{
-							"name": "DoesnotExistInSINK"
+							"name": "doesnotexist"
+						},
+						{
+							"name": "AlterRow1"
 						}
 					],
 					"scriptLines": [
@@ -771,101 +344,89 @@
 						"     ),",
 						"     allowSchemaDrift: true,",
 						"     validateSchema: false,",
-						"     ignoreNoFilesFound: false) ~> source",
+						"     ignoreNoFilesFound: false,",
+						"     mode: 'read') ~> bronzesource",
 						"source(output(",
-						"          {id } as integer,",
+						"          id as integer,",
 						"          fname as string,",
 						"          lname as string,",
-						"          {age } as string,",
+						"          age as integer,",
 						"          hobby as string",
 						"     ),",
 						"     allowSchemaDrift: true,",
 						"     validateSchema: false,",
-						"     ignoreNoFilesFound: false) ~> sinkassource",
-						"source, sinkassource exists(source@{id } == sinkassource@{id },",
+						"     waterMarkColumn: 'id',",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table',",
+						"     mode: 'read') ~> sinkassource",
+						"bronzesource, sinkassource exists({id } == id,",
 						"     negate:true,",
-						"     broadcast: 'auto')~> DoesnotExistInSINK",
-						"DoesnotExistInSINK sink(allowSchemaDrift: true,",
+						"     broadcast: 'auto')~> doesnotexist",
+						"doesnotexist alterRow(upsertIf(true())) ~> AlterRow1",
+						"AlterRow1 sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     input(",
-						"          {id } as string,",
+						"          id as integer,",
 						"          fname as string,",
 						"          lname as string,",
-						"          {age } as string,",
+						"          age as integer,",
 						"          hobby as string",
 						"     ),",
-						"     partitionFileNames:['people.csv'],",
-						"     umask: 0022,",
-						"     preCommands: [],",
-						"     postCommands: [],",
+						"     deletable:false,",
+						"     insertable:false,",
+						"     updateable:false,",
+						"     upsertable:true,",
+						"     keys:['id'],",
+						"     format: 'table',",
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true,",
-						"     partitionBy('hash', 1)) ~> sink"
+						"     saveOrder: 1,",
+						"     errorHandlingOption: 'stopOnFirstError',",
+						"     mapColumn(",
+						"          id = {id },",
+						"          fname,",
+						"          lname,",
+						"          age = {age },",
+						"          hobby",
+						"     ),",
+						"     preCommands: [],",
+						"     postCommands: []) ~> sink"
 					]
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/personainfo_dataset')]",
-				"[concat(variables('factoryId'), '/datasets/ds_dftarget')]"
+				"[concat(variables('factoryId'), '/datasets/ds_people')]",
+				"[concat(variables('factoryId'), '/datasets/targetsqldb')]"
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/mergingrows')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
+			"name": "[concat(parameters('factoryName'), '/incremenatal load trigger')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"type": "MappingDataFlow",
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "incrementaldataload",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
+					}
+				],
+				"type": "ScheduleTrigger",
 				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "personainfo_dataset",
-								"type": "DatasetReference"
-							},
-							"name": "source"
-						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "ds_dftarget",
-								"type": "DatasetReference"
-							},
-							"name": "sink"
-						}
-					],
-					"transformations": [],
-					"scriptLines": [
-						"source(output(",
-						"          {id } as string,",
-						"          fname as string,",
-						"          lname as string,",
-						"          {age } as string,",
-						"          hobby as string",
-						"     ),",
-						"     allowSchemaDrift: false,",
-						"     validateSchema: false,",
-						"     ignoreNoFilesFound: false) ~> source",
-						"source sink(allowSchemaDrift: false,",
-						"     validateSchema: false,",
-						"     input(",
-						"          {id } as string,",
-						"          fname as string,",
-						"          lname as string,",
-						"          {age } as string,",
-						"          hobby as string",
-						"     ),",
-						"     umask: 0022,",
-						"     preCommands: [],",
-						"     postCommands: [],",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> sink"
-					]
+					"recurrence": {
+						"frequency": "Minute",
+						"interval": 2,
+						"startTime": "2025-02-27T21:00:00",
+						"timeZone": "India Standard Time"
+					}
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/personainfo_dataset')]",
-				"[concat(variables('factoryId'), '/datasets/ds_dftarget')]"
+				"[concat(variables('factoryId'), '/pipelines/incrementaldataload')]"
 			]
 		}
 	]

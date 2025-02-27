@@ -15,6 +15,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'ls_onPremServer'"
 		},
+		"lssqldb_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'lssqldb'"
+		},
 		"ls_datalake_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://targetdatasource.dfs.core.windows.net/"
@@ -30,6 +34,18 @@
 		"ls_onPremServer_properties_typeProperties_userName": {
 			"type": "string",
 			"defaultValue": "sa"
+		},
+		"lssqldb_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "azdmsqlserver.database.windows.net"
+		},
+		"lssqldb_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "azdmsqldb"
+		},
+		"lssqldb_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "pavn"
 		},
 		"containerUri": {
 			"type": "string",
@@ -61,11 +77,23 @@
 					"ls_datalake_accountKey": {
 						"value": "[parameters('ls_datalake_accountKey')]"
 					},
+					"lssqldb_password": {
+						"value": "[parameters('lssqldb_password')]"
+					},
 					"ls_onPremServer_password": {
 						"value": "[parameters('ls_onPremServer_password')]"
 					},
 					"ls_datalake_properties_typeProperties_url": {
 						"value": "[parameters('ls_datalake_properties_typeProperties_url')]"
+					},
+					"lssqldb_properties_typeProperties_server": {
+						"value": "[parameters('lssqldb_properties_typeProperties_server')]"
+					},
+					"lssqldb_properties_typeProperties_database": {
+						"value": "[parameters('lssqldb_properties_typeProperties_database')]"
+					},
+					"lssqldb_properties_typeProperties_userName": {
+						"value": "[parameters('lssqldb_properties_typeProperties_userName')]"
 					},
 					"ls_onPremServer_properties_typeProperties_server": {
 						"value": "[parameters('ls_onPremServer_properties_typeProperties_server')]"

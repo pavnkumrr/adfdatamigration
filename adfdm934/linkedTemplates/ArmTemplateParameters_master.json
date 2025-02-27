@@ -11,6 +11,9 @@
 		"ls_onPremServer_password": {
 			"value": ""
 		},
+		"lssqldb_password": {
+			"value": ""
+		},
 		"ls_datalake_properties_typeProperties_url": {
 			"value": "https://targetdatasource.dfs.core.windows.net/"
 		},
@@ -22,6 +25,15 @@
 		},
 		"ls_onPremServer_properties_typeProperties_userName": {
 			"value": "sa"
+		},
+		"lssqldb_properties_typeProperties_server": {
+			"value": "azdmsqlserver.database.windows.net"
+		},
+		"lssqldb_properties_typeProperties_database": {
+			"value": "azdmsqldb"
+		},
+		"lssqldb_properties_typeProperties_userName": {
+			"value": "pavn"
 		},
 		"containerUri": {
 			"value": ""
